@@ -24,9 +24,9 @@ class migration {
         $xmlParse = simplexml_load_file($this->schemaPath);
         foreach ($xmlParse->object as $object) {
             $arrAttributes = $object->attributes();
-            $strTableName = (string) $arrAttributes['table_name'];
+            $strTableName = (string) $arrAttributes->table;
             if (!empty($this->arrTables[$strTableName])) {
-                $this->updateTable();
+                $this->updateTable($strTableName, $object->field);
             } else {
                 $this->createTable($strTableName, $object->field);
             }
@@ -38,52 +38,100 @@ class migration {
     }
 
     public function getTables() {
-        $result = $this->conn->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='test_application'");
+        $result = $this->conn->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND
+        TABLE_SCHEMA='test_application'");
         foreach ($result as $row) {
             $this->arrTables[$row['TABLE_NAME']] = $row['TABLE_NAME'];
         }
     }
 
-    public function getColumns() {
-        
+    public function getColumns($strTableName) {
+        //TODO: have use configured database
+        $arrColumn = array();
+        $result = $this->conn->query("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` 
+                                     WHERE `TABLE_SCHEMA`='test_application' AND `TABLE_NAME`='" . $strTableName . "'");
+        foreach ($result as $row) {
+            $arrColumn[$row['COLUMN_NAME']] = $row['COLUMN_NAME'];
+        }
+        return $arrColumn;
     }
 
     public function createTable($strTableName, $arrFields) {
         $arrMysqlField = array();
         $index = 0;
-        foreach ($arrFields as $fields)
-        {
-          $strField = '';
-          $arrFieldAttributes = $fields->attributes();   
-          if(isset($arrFieldAttributes['name']))
-             $strField .= "`".$arrFieldAttributes['name']."`";
-          if(isset($arrFieldAttributes['dbtype']) && isset($arrFieldAttributes['precision']))
-            $strField .= " ".$arrFieldAttributes['dbtype']."(".$arrFieldAttributes['precision'].")";
-          if(isset($arrFieldAttributes['null']) && $arrFieldAttributes['null'] == 'false')
-            $strField .= " NOT NULL";
-          else
-            $strField .= " DEFAULT NULL";  
-          $arrMysqlField[$index++] = $strField;
+        $strPrimaryKey = '';
+        foreach ($arrFields as $fields) {
+            $arrFieldAttributes = $fields->attributes();
+            $arrMysqlField[$index++] = $this->generateSQLColumn($arrFieldAttributes);
+            if (isset($arrFieldAttributes->index) && $arrFieldAttributes->index == 'pk') {
+                $strPrimaryKey = 'PRIMARY KEY (' . $arrFieldAttributes->key . ') ';
+            }
         }
         $strField = implode(',', $arrMysqlField);
-        $strTamplete = "CREATE TABLE IF NOT EXISTS `" . $strTableName . "` (
-          [[+fields]]
-        )";
+        if (!empty($strPrimaryKey)) {
+            $strField .= ',' . $strPrimaryKey;
+        }
+        $strTamplete = "CREATE TABLE IF NOT EXISTS `" . $strTableName . "` ([[+fields]])";
         $queryString = str_replace('[[+fields]]', $strField, $strTamplete);
+        echo "<br/>" . $queryString;
         $result = $this->conn->query($queryString);
-        if($result)
-          echo "<br/> >> Successfully created table $strTableName";
+        if ($result)
+            echo "<br/> >> Successfully created table $strTableName";
         else
-          echo "<br/> >> Failed to created table $strTableName";  
+            echo "<br/> >> Failed to created table $strTableName";
     }
-    
-    public function updateTable()
-    {
+
+    public function generateSQLColumn($arrFieldAttributes) {
+        $strField = '';
+        if (isset($arrFieldAttributes->name))
+            $strField .= "`" . $arrFieldAttributes->name . "`";
+        
+        if (isset($arrFieldAttributes->key))
+            $strField .= "`" . $arrFieldAttributes->key . "`";
+
+        if (isset($arrFieldAttributes->dbtype) && isset($arrFieldAttributes->precision)) {
+            $strField .= " " . $arrFieldAttributes->dbtype . "(" . $arrFieldAttributes->precision . ")";
+        } else if (isset($arrFieldAttributes->dbtype)) {
+            $strField .= ' ' . $arrFieldAttributes->dbtype;
+        }
+
+        if (isset($arrFieldAttributes->null) && $arrFieldAttributes->null == 'false')
+            $strField .= " NOT NULL";
+        else
+            $strField .= " DEFAULT NULL";
+        return $strField;
+    }
+
+    public function updateTable($strTableName, $arrFields) {
+        $arrTableColumn = $this->getColumns($strTableName);
+        foreach ($arrFields as $objField) {
+            $arrFieldAttributes = $objField->attributes();
+            $strFieldName = (string)$arrFieldAttributes->name;
+            if (empty($arrTableColumn[$strFieldName])) {
+                $strSQLColumn = $this->generateSQLColumn($arrFieldAttributes);
+                $this->addColumn($strTableName, $strSQLColumn);
+                break;
+            }
+        }
+    }
+
+    public function addColumn($strTableName, $strField) {
+      $strSqlQuery = "ALTER TABLE `".$strTableName."` ADD ".$strField;
+      echo " ".$strSqlQuery;
+      $result = $this->conn->query($strSqlQuery);
+      if($result) {
+         echo ">> Successfully added 1 columns into $strTableName"; 
+      }
+      else {
+          echo ">> Failed to added 1 columns into $strTableName";
+      }
+    }
+
+    public function removeColumn() {
         
     }
     
-    public function updateTableColumn()
-    {
+    public function removeTable() {
         
     }
 
