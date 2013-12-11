@@ -1,0 +1,10 @@
+<database name='test_application'>
+  <object class='User' table='ext_users'>
+    <field name='username' dbtype='varchar' precision='255' null='false'/>
+    <field name='password' dbtype='varchar' precision='255'  null='true'/>
+    <field name='email' dbtype='varchar' precision='255'  null='true'/>
+  </object>  
+  <object class='Product' table='ext_products'>
+    <field name='name' dbtype='varchar' precision='255'/>
+  </object> 
+</database>
