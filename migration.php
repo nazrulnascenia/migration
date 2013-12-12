@@ -116,7 +116,7 @@ class migration {
                 $strSQLColumn = $this->generateSQLColumn($arrFieldAttributes);
                 $this->addColumn($strTableName, $strSQLColumn);
             }
-        }die;
+        }
     }
 
     public function addColumn($strTableName, $strField) {
