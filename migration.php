@@ -17,7 +17,7 @@ class migration {
     }
 
     public function getConnection() {
-        $pdo = new PDO('mysql:host=localhost;dbname=test_application', 'root', '1234');
+        $pdo = new PDO('mysql:host=localhost;dbname=test_application', 'root', '');
         if ($pdo) {
             return $pdo;
         } else {
