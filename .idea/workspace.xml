@@ -2,15 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b1ce7ee2-4b64-44c6-a075-f2e82b947788" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/migration.php" afterPath="$PROJECT_DIR$/migration.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/schema/migration.xml" afterPath="$PROJECT_DIR$/schema/migration.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/migration.iml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
     </list>
     <ignored path="migration.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Dummy.txt" changelist="b1ce7ee2-4b64-44c6-a075-f2e82b947788" time="1386825137036" ignored="false" />
-    <file path="/migration.xml" changelist="b1ce7ee2-4b64-44c6-a075-f2e82b947788" time="1386825662022" ignored="false" />
+    <file path="/migration.xml" changelist="b1ce7ee2-4b64-44c6-a075-f2e82b947788" time="1386828705046" ignored="false" />
     <file path="/a.dummy" changelist="b1ce7ee2-4b64-44c6-a075-f2e82b947788" time="1386825337201" ignored="false" />
-    <file path="/migration.php" changelist="b1ce7ee2-4b64-44c6-a075-f2e82b947788" time="1386825810282" ignored="false" />
+    <file path="/migration.php" changelist="b1ce7ee2-4b64-44c6-a075-f2e82b947788" time="1386829402319" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,10 +35,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="migration.xml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="migration.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/schema/migration.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="0" selection-start="1304" selection-end="1304" vertical-scroll-proportion="0.65217394">
+            <state line="11" column="83" selection-start="795" selection-end="795" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -48,10 +53,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="migration.php" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="migration.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/migration.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="42" selection-start="1307" selection-end="1307" vertical-scroll-proportion="-10.0">
+            <state line="105" column="59" selection-start="3995" selection-end="3995" vertical-scroll-proportion="0.6587771">
               <folding />
             </state>
           </provider>
@@ -256,16 +261,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/migration.php">
+    <entry file="file://$PROJECT_DIR$/schema/migration.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="42" selection-start="1307" selection-end="1307" vertical-scroll-proportion="-10.0">
+        <state line="11" column="83" selection-start="795" selection-end="795" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/schema/migration.xml">
+    <entry file="file://$PROJECT_DIR$/migration.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="0" selection-start="1304" selection-end="1304" vertical-scroll-proportion="0.65217394">
+        <state line="105" column="59" selection-start="3995" selection-end="3995" vertical-scroll-proportion="0.6587771">
           <folding />
         </state>
       </provider>
