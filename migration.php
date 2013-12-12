@@ -109,12 +109,28 @@ class migration {
 
     public function updateTable($strTableName, $arrFields) {
         $arrTableColumn = $this->getColumns($strTableName);
+        $arrSchemaColumns = array();
         foreach ($arrFields as $objField) {
             $arrFieldAttributes = $objField->attributes();
             $strFieldName = ($arrFieldAttributes->name == '') ? (string)$arrFieldAttributes->key : (string)$arrFieldAttributes->name;
+            $arrSchemaColumns[$strFieldName] = $strFieldName;
             if(!array_key_exists($strFieldName, $arrTableColumn)){
                 $strSQLColumn = $this->generateSQLColumn($arrFieldAttributes);
                 $this->addColumn($strTableName, $strSQLColumn);
+            }
+
+            else {
+
+                $this->updateColumn($strTableName,$arrFieldAttributes);
+
+            }
+        }
+
+        $arrDeleteColums = array_diff($arrTableColumn,$arrSchemaColumns);
+
+        if(is_array($arrDeleteColums) && count($arrDeleteColums) > 0 ){
+            foreach($arrDeleteColums as $strColumnName) {
+                $this->removeColumn($strTableName, $strColumnName);
             }
         }
     }
@@ -133,10 +149,38 @@ class migration {
       }
     }
 
-    public function removeColumn() {
-        
+    public function removeColumn($strTableName, $strField) {
+
+        $strSqlQuery = "ALTER TABLE `".$strTableName."` DROP COLUMN ".$strField;
+        echo " ".$strSqlQuery;
+        $result = $this->conn->query($strSqlQuery);
+        if($result) {
+            echo ">> Successfully removed column ".$strField." from $strTableName";
+            echo '<br>';
+        }
+        else {
+            echo ">> Failed to remove column ".$strField." from $strTableName";
+            echo '<br>';
+        }
     }
-    
+
+    private function updateColumn($strTableName, $arrFieldAttributes) {
+
+        print_r($arrFieldAttributes);
+        $blnCheckUpdate = false;
+
+        $strFieldName = ($arrFieldAttributes->name == '') ? (string)$arrFieldAttributes->key : (string)$arrFieldAttributes->name;
+
+        $strSqlQuery = ('SELECT * FROM INFORMATION_SCHEMA.COLUMNS'
+            . ' WHERE TABLE_NAME = "'.$strTableName.'" AND COLUMN_NAME = "'.$strFieldName.'"' );
+        echo " ".$strSqlQuery;
+        $result = $this->conn->prepare($strSqlQuery);
+        $result->execute();
+        $row = $result->fetchAll(PDO::FETCH_ASSOC);
+
+        print_r($row);
+    }
+
     public function removeTable() {
         
     }
