@@ -2,11 +2,16 @@
 
 class migration {
 
-    public $conn, $schemaPath, $arrTables;
+    private $conn;
+
+    private $schemaPath;
+
+    private $arrTables;
+
 
     public function __construct() {
         $this->conn = $this->getConnection();
-        $this->schemaPath = $_SERVER['DOCUMENT_ROOT'] . "/migration/schema/migration.xml";
+        $this->schemaPath = $_SERVER['DOCUMENT_ROOT'] . "/schema/migration.xml";
         $this->arrTables = array();
         $this->getTables();
     }
@@ -106,11 +111,10 @@ class migration {
         $arrTableColumn = $this->getColumns($strTableName);
         foreach ($arrFields as $objField) {
             $arrFieldAttributes = $objField->attributes();
-            $strFieldName = (string)$arrFieldAttributes->name;
-            if (empty($arrTableColumn[$strFieldName])) {
+            $strFieldName = ($arrFieldAttributes->name == '') ? (string)$arrFieldAttributes->key : (string)$arrFieldAttributes->name;
+            if(!array_key_exists($strFieldName, $arrTableColumn)){
                 $strSQLColumn = $this->generateSQLColumn($arrFieldAttributes);
                 $this->addColumn($strTableName, $strSQLColumn);
-                break;
             }
         }
     }
@@ -120,10 +124,12 @@ class migration {
       echo " ".$strSqlQuery;
       $result = $this->conn->query($strSqlQuery);
       if($result) {
-         echo ">> Successfully added 1 columns into $strTableName"; 
+         echo ">> Successfully added 1 columns into $strTableName";
+         echo '<br>';
       }
       else {
           echo ">> Failed to added 1 columns into $strTableName";
+          echo '<br>';
       }
     }
 
