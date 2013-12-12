@@ -5,6 +5,7 @@
         <field name='password' dbtype='varchar' precision='255' null='true'/>
         <field name='country' dbtype='varchar' precision='255' null='true'/>
         <field name='email' dbtype='varchar' precision='255' null='true'/>
+        <field name='url' dbtype='varchar' precision='255' null='true'/>
         <field name='address1' dbtype='varchar' precision='255' null='true'/>
         <index alias="primary" name="primary" primary="true" unique="true" type="BTREE">
             <column key="id" length="" collation="A" null="false"/>
