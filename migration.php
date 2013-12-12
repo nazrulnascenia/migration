@@ -6,13 +6,13 @@ class migration {
 
     public function __construct() {
         $this->conn = $this->getConnection();
-        $this->schemaPath = $_SERVER['DOCUMENT_ROOT'] . "/Migration/schema/migration.xml";
+        $this->schemaPath = $_SERVER['DOCUMENT_ROOT'] . "/migration/schema/migration.xml";
         $this->arrTables = array();
         $this->getTables();
     }
 
     public function getConnection() {
-        $pdo = new PDO('mysql:host=localhost;dbname=test_application', 'root', '');
+        $pdo = new PDO('mysql:host=localhost;dbname=test_application', 'root', '1234');
         if ($pdo) {
             return $pdo;
         } else {

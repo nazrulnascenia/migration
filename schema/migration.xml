@@ -1,10 +1,45 @@
-<database name='test_application'>
-  <object class='User' table='ext_users'>
-    <field name='username' dbtype='varchar' precision='255' null='false'/>
-    <field name='password' dbtype='varchar' precision='255'  null='true'/>
-    <field name='email' dbtype='varchar' precision='255'  null='true'/>
-  </object>  
-  <object class='Product' table='ext_products'>
-    <field name='name' dbtype='varchar' precision='255'/>
-  </object> 
-</database>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<model package="store" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" version="1.1">
+
+    <object class="storeOrder" table="order" extends="xPDOObject">
+
+        <field key="id" dbtype="int" precision="11" phptype="integer" null="false" index="pk" generated="native"/>
+        <field key="modx_users_fk" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="order_status_fk" dbtype="tinyint" precision="4" phptype="integer" null="false"/>
+        <field key="total_price" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="order_time" dbtype="varchar" precision="30" phptype="string" null="false"/>
+        <field key="shipping_address" dbtype="text" phptype="string" null="false"/>
+
+        <index alias="PRIMARY" name="PRIMARY" primary="false" unique="false" type="BTREE">
+            <column key="id" length="" collation="A" null="false"/>
+        </index>
+
+        <composite alias="storeOrderDetail" class="storeOrderDetail" local="id" foreign="order_fk" cardinality="one"
+                   owner="local"/>
+
+        <aggregate alias="storeOrderStatus" class="storeOrderStatus" local="order_status_fk" foreign="id"
+                   cardinality="one" owner="foreign"/>
+
+    </object>
+
+
+    <object class="storeOrderDetail" table="order_detail" extends="xPDOObject">
+
+        <field key="id" dbtype="int" precision="11" phptype="integer" null="false" index="pk" generated="native"/>
+        <field key="order_fk" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="product_fk" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="current_price" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key="quantity" dbtype="int" precision="11" phptype="integer" null="false"/>
+
+        <index alias="PRIMARY" name="PRIMARY" primary="true" unique="true" type="BTREE">
+            <column key="id" length="" collation="A" null="false"/>
+        </index>
+        <composite alias="storeOrderDetailProductVariant" class="storeOrderDetailProductVariant" local="id"
+                   foreign="order_detail_fk" cardinality="many" owner="local"/>
+        <aggregate alias="storeProduct" class="storeProduct" local="product_fk" foreign="id" cardinality="one"
+                   owner="foreign"/>
+        <aggregate alias="storeOrder" class="storeOrder" local="order_fk" foreign="id" cardinality="one"
+                   owner="foreign"/>
+    </object>
+</model>
