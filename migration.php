@@ -11,13 +11,13 @@ class migration {
 
     public function __construct() {
         $this->conn = $this->getConnection();
-        $this->schemaPath = $_SERVER['DOCUMENT_ROOT'] . "/schema/migration.xml";
+        $this->schemaPath = $_SERVER['DOCUMENT_ROOT'] . "/migration/schema/migration.xml";
         $this->arrTables = array();
         $this->getTables();
     }
 
     public function getConnection() {
-        $pdo = new PDO('mysql:host=localhost;dbname=test_application', 'root', '');
+        $pdo = new PDO('mysql:host=localhost;dbname=test_application', 'root', 'nas123');
         if ($pdo) {
             return $pdo;
         } else {
@@ -66,10 +66,10 @@ class migration {
         $index = 0;
         $strPrimaryKey = '';
         foreach ($arrFields as $fields) {
-            $arrFieldAttributes = $fields->attributes();
-            $arrMysqlField[$index++] = $this->generateSQLColumn($arrFieldAttributes);
-            if (isset($arrFieldAttributes->index) && $arrFieldAttributes->index == 'pk') {
-                $strPrimaryKey = 'PRIMARY KEY (' . $arrFieldAttributes->key . ') ';
+            $objFieldAttributes = $fields->attributes();
+            $arrMysqlField[$index++] = $this->generateSQLColumn($objFieldAttributes);
+            if (isset($objFieldAttributes->index) && $objFieldAttributes->index == 'pk') {
+                $strPrimaryKey = 'PRIMARY KEY (' . $objFieldAttributes->key . ') ';
             }
         }
         $strField = implode(',', $arrMysqlField);
@@ -86,21 +86,21 @@ class migration {
             echo "<br/> >> Failed to created table $strTableName";
     }
 
-    public function generateSQLColumn($arrFieldAttributes) {
+    public function generateSQLColumn($objFieldAttributes) {
         $strField = '';
-        if (isset($arrFieldAttributes->name))
-            $strField .= "`" . $arrFieldAttributes->name . "`";
+        if (isset($objFieldAttributes->name))
+            $strField .= "`" . $objFieldAttributes->name . "`";
         
-        if (isset($arrFieldAttributes->key))
-            $strField .= "`" . $arrFieldAttributes->key . "`";
+        if (isset($objFieldAttributes->key))
+            $strField .= "`" . $objFieldAttributes->key . "`";
 
-        if (isset($arrFieldAttributes->dbtype) && isset($arrFieldAttributes->precision)) {
-            $strField .= " " . $arrFieldAttributes->dbtype . "(" . $arrFieldAttributes->precision . ")";
-        } else if (isset($arrFieldAttributes->dbtype)) {
-            $strField .= ' ' . $arrFieldAttributes->dbtype;
+        if (isset($objFieldAttributes->dbtype) && isset($objFieldAttributes->precision)) {
+            $strField .= " " . $objFieldAttributes->dbtype . "(" . $objFieldAttributes->precision . ")";
+        } else if (isset($objFieldAttributes->dbtype)) {
+            $strField .= ' ' . $objFieldAttributes->dbtype;
         }
 
-        if (isset($arrFieldAttributes->null) && $arrFieldAttributes->null == 'false')
+        if (isset($objFieldAttributes->null) && $objFieldAttributes->null == 'false')
             $strField .= " NOT NULL";
         else
             $strField .= " DEFAULT NULL";
@@ -111,17 +111,17 @@ class migration {
         $arrTableColumn = $this->getColumns($strTableName);
         $arrSchemaColumns = array();
         foreach ($arrFields as $objField) {
-            $arrFieldAttributes = $objField->attributes();
-            $strFieldName = ($arrFieldAttributes->name == '') ? (string)$arrFieldAttributes->key : (string)$arrFieldAttributes->name;
+            $objFieldAttributes = $objField->attributes();
+            $strFieldName = ($objFieldAttributes->name == '') ? (string)$objFieldAttributes->key : (string)$objFieldAttributes->name;
             $arrSchemaColumns[$strFieldName] = $strFieldName;
             if(!array_key_exists($strFieldName, $arrTableColumn)){
-                $strSQLColumn = $this->generateSQLColumn($arrFieldAttributes);
+                $strSQLColumn = $this->generateSQLColumn($objFieldAttributes);
                 $this->addColumn($strTableName, $strSQLColumn);
             }
 
             else {
 
-                $this->updateColumn($strTableName,$arrFieldAttributes);
+                $this->updateColumn($strTableName,$objFieldAttributes);
 
             }
         }
@@ -164,12 +164,12 @@ class migration {
         }
     }
 
-    private function updateColumn($strTableName, $arrFieldAttributes) {
+    private function updateColumn($strTableName, $objFieldAttributes) {
 
-        print_r($arrFieldAttributes);
+        print_r($objFieldAttributes);
         $blnCheckUpdate = false;
 
-        $strFieldName = ($arrFieldAttributes->name == '') ? (string)$arrFieldAttributes->key : (string)$arrFieldAttributes->name;
+        $strFieldName = ($objFieldAttributes->name == '') ? (string)$objFieldAttributes->key : (string)$objFieldAttributes->name;
 
         $strSqlQuery = ('SELECT * FROM INFORMATION_SCHEMA.COLUMNS'
             . ' WHERE TABLE_NAME = "'.$strTableName.'" AND COLUMN_NAME = "'.$strFieldName.'"' );
@@ -179,6 +179,7 @@ class migration {
         $row = $result->fetchAll(PDO::FETCH_ASSOC);
 
         print_r($row);
+        die;
     }
 
     public function removeTable() {
