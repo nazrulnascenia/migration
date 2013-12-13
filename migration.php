@@ -3,11 +3,8 @@
 class migration {
 
     private $conn;
-
     private $schemaPath;
-
     private $arrTables;
-
 
     public function __construct() {
         $this->conn = $this->getConnection();
@@ -136,17 +133,16 @@ class migration {
     }
 
     public function addColumn($strTableName, $strField) {
-      $strSqlQuery = "ALTER TABLE `".$strTableName."` ADD ".$strField;
-      echo " ".$strSqlQuery;
-      $result = $this->conn->query($strSqlQuery);
-      if($result) {
-         echo ">> Successfully added 1 columns into $strTableName";
-         echo '<br>';
-      }
-      else {
-          echo ">> Failed to added 1 columns into $strTableName";
-          echo '<br>';
-      }
+        $strSqlQuery = "ALTER TABLE `" . $strTableName . "` ADD " . $strField;
+        echo " " . $strSqlQuery;
+        $result = $this->conn->query($strSqlQuery);
+        if ($result) {
+            echo ">> Successfully added 1 columns into $strTableName";
+            echo '<br>';
+        } else {
+            echo ">> Failed to added 1 columns into $strTableName";
+            echo '<br>';
+        }
     }
 
     public function removeColumn($strTableName, $strField) {
