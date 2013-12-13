@@ -31,6 +31,7 @@
         <field key="product_fk" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="current_price" dbtype="int" precision="11" phptype="integer" null="false"/>
         <field key="quantity" dbtype="int" precision="11" phptype="integer" null="false"/>
+        <field key='similar_product' dbtype='varchar' precision='56' null='true' phptype='string'/>
 
         <index alias="PRIMARY" name="PRIMARY" primary="true" unique="true" type="BTREE">
             <column key="id" length="" collation="A" null="false"/>

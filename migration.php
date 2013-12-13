@@ -1,5 +1,6 @@
 <?php
 
+include_once 'config.inc.php';
 class migration {
 
     private $conn;
@@ -14,7 +15,10 @@ class migration {
     }
 
     public function getConnection() {
-        $pdo = new PDO('mysql:host=localhost;dbname=test_application', 'root', 'nas123');
+        global $username;
+        global $password;
+        global $database_sdn;
+        $pdo = new PDO($database_sdn, $username, $password);
         if ($pdo) {
             return $pdo;
         } else {
@@ -75,7 +79,6 @@ class migration {
         }
         $strTamplete = "CREATE TABLE IF NOT EXISTS `" . $strTableName . "` ([[+fields]])";
         $queryString = str_replace('[[+fields]]', $strField, $strTamplete);
-        echo "<br/>" . $queryString;
         $result = $this->conn->query($queryString);
         if ($result)
             echo "<br/> >> Successfully created table $strTableName";
@@ -87,7 +90,7 @@ class migration {
         $strField = '';
         if (isset($objFieldAttributes->name))
             $strField .= "`" . $objFieldAttributes->name . "`";
-        
+
         if (isset($objFieldAttributes->key))
             $strField .= "`" . $objFieldAttributes->key . "`";
 
@@ -109,24 +112,21 @@ class migration {
         $arrSchemaColumns = array();
         foreach ($arrFields as $objField) {
             $objFieldAttributes = $objField->attributes();
-            $strFieldName = ($objFieldAttributes->name == '') ? (string)$objFieldAttributes->key : (string)$objFieldAttributes->name;
+            $strFieldName = ($objFieldAttributes->name == '') ? (string) $objFieldAttributes->key : (string) $objFieldAttributes->name;
             $arrSchemaColumns[$strFieldName] = $strFieldName;
-            if(!array_key_exists($strFieldName, $arrTableColumn)){
+            if (!array_key_exists($strFieldName, $arrTableColumn)) {
                 $strSQLColumn = $this->generateSQLColumn($objFieldAttributes);
                 $this->addColumn($strTableName, $strSQLColumn);
-            }
+            } else {
 
-            else {
-
-                $this->updateColumn($strTableName,$objFieldAttributes);
-
+                $this->updateColumn($strTableName, $objFieldAttributes);
             }
         }
 
-        $arrDeleteColums = array_diff($arrTableColumn,$arrSchemaColumns);
+        $arrDeleteColums = array_diff($arrTableColumn, $arrSchemaColumns);
 
-        if(is_array($arrDeleteColums) && count($arrDeleteColums) > 0 ){
-            foreach($arrDeleteColums as $strColumnName) {
+        if (is_array($arrDeleteColums) && count($arrDeleteColums) > 0) {
+            foreach ($arrDeleteColums as $strColumnName) {
                 $this->removeColumn($strTableName, $strColumnName);
             }
         }
@@ -134,7 +134,6 @@ class migration {
 
     public function addColumn($strTableName, $strField) {
         $strSqlQuery = "ALTER TABLE `" . $strTableName . "` ADD " . $strField;
-        echo " " . $strSqlQuery;
         $result = $this->conn->query($strSqlQuery);
         if ($result) {
             echo ">> Successfully added 1 columns into $strTableName";
@@ -147,35 +146,29 @@ class migration {
 
     public function removeColumn($strTableName, $strField) {
 
-        $strSqlQuery = "ALTER TABLE `".$strTableName."` DROP COLUMN ".$strField;
-        echo " ".$strSqlQuery;
+        $strSqlQuery = "ALTER TABLE `" . $strTableName . "` DROP COLUMN " . $strField;
         $result = $this->conn->query($strSqlQuery);
-        if($result) {
-            echo ">> Successfully removed column ".$strField." from $strTableName";
+        if ($result) {
+            echo ">> Successfully removed column " . $strField . " from $strTableName";
             echo '<br>';
-        }
-        else {
-            echo ">> Failed to remove column ".$strField." from $strTableName";
+        } else {
+            echo ">> Failed to remove column " . $strField . " from $strTableName";
             echo '<br>';
         }
     }
 
     private function updateColumn($strTableName, $objFieldAttributes) {
 
-        print_r($objFieldAttributes);
         $blnCheckUpdate = false;
 
-        $strFieldName = ($objFieldAttributes->name == '') ? (string)$objFieldAttributes->key : (string)$objFieldAttributes->name;
+        $strFieldName = ($objFieldAttributes->name == '') ? (string) $objFieldAttributes->key : (string) $objFieldAttributes->name;
 
         $strSqlQuery = ('SELECT * FROM INFORMATION_SCHEMA.COLUMNS'
-            . ' WHERE TABLE_NAME = "'.$strTableName.'" AND COLUMN_NAME = "'.$strFieldName.'"' );
-        echo " ".$strSqlQuery;
+                . ' WHERE TABLE_NAME = "' . $strTableName . '" AND COLUMN_NAME = "' . $strFieldName . '"' );
         $result = $this->conn->prepare($strSqlQuery);
         $result->execute();
         $row = $result->fetchAll(PDO::FETCH_ASSOC);
-
-        print_r($row);
-        die;
+        //die;
     }
 
     public function removeTable() {
